@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="sdk/jquery-1.11.1.js"></script>
+		<script src="sdk/strophe.js"></script>
+		<script src="sdk/json2.js"></script>
+		<script src="sdk/easemob.im-1.1.js"></script>
+		<script src="sdk/easemob.im-1.1.shim.js"></script>
+		<script src="easemob.im.config.js"></script>
+		<script type="text/javascript" src="js/bmob-min.js"></script>
+		<script type="text/javascript" src="js/Bmob.Config.js"></script>
+	</head>
+	<body>
+		<button id="hx">环信注册</button>
+		<button id="bmob">Bmob注册</button>
+		<script>
+		BmobInit();
+		$("#hx").click(function(){
+			clickReg();
+		});
+		$("#bmob").click(function(){
+			bmobReg();
+		});
+		var bmobReg = function(){
+			var Obj =  Bmob.Object.extend('User');
+			var o = new Bmob.Query(Obj);
+			o.get("Fd7hBBBE",{
+			success:function(e){
+				console.log(e);
+				for(var i = 26;i<=60;i++){
+					bmobAction(e,i);
+				}
+			},
+			error:function(o,e){
+				console.log(e);
+			}
+			});
+			
+		}
+		var bmobAction = function(ower,i){
+			var Obj = Bmob.Object.extend('subUser');
+			var o = new Obj();
+			o.set('name','ping'+i);
+			o.set('ower',ower);
+			o.set('password','123');
+			o.set('type',4+"");
+			o.save(null,{
+				success:function(g){
+					console.log(g);
+				},
+				error:function(o,e){
+					console.log(e);
+				}
+			});
+		}
+		var clickReg = function(){
+			for(var i = 27;i<=60;i++){
+				reg(i);
+				console.log(i);
+			}
+		}
+		var reg = function(i){
+			var options = {
+			username : 'ping'+i,
+			password : '123',
+			appKey : 'dooze#onlinejudge',
+			success : function(result) {
+					console.log(result);
+			},
+			error : function(e) {
+					console.log(e);
+			}
+			};
+			Easemob.im.Helper.registerUser(options);
+		}
+		
+		</script>
+	</body>
+</html>

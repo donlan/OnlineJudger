@@ -1,0 +1,257 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="sdk/jquery-1.11.1.js"></script>
+<script src="sdk/strophe.js"></script>
+<script src="sdk/json2.js"></script>
+<script src="bmob.js"></script>
+<script src="js/bmob-min.js"></script>
+<script src="js/Bmob.Config.js"></script>
+<script src="sdk/easemob.im-1.1.js"></script>
+<script src="sdk/easemob.im-1.1.shim.js"></script>
+<script src="easemob.im.config.js"></script>
+<script type="text/javascript" src="js/pageQuery.js" ></script>
+<script type="text/javascript" src="js/zebra_dialog.js"></script>
+<link rel="stylesheet" href="css/zebra_dialog.css" type="text/css">
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<!--[if lte IE 9]>
+<script src="sdk/jplayer/jquery.jplayer.min.js"></script>
+<script src="sdk/swfupload/swfupload.js"></script>
+<![endif]-->
+<title>副总裁判长</title>
+<style type="text/css">
+#newsInBlock {
+	text-align: center;
+	padding-top: 80px;
+	padding-bottom: 20px;
+	text-align: center;
+	margin-bottom: 20px;
+	color: #fff;
+	background-color: #FF932C;
+	padding: 16px;
+	min-height: 200px;
+	border: 10px solid #FFEBD8;
+}
+
+#newScore {
+	vertical-align: middle;
+	color: #FAFAFA;
+}
+
+td {
+	text-align: center;
+	background-color:#FFFAF0;
+	padding: 12px;
+	margin:20px;
+	border-style: solid;
+	border-width: 5px;
+	border-color: #F0AD4E;
+	width: 48%;
+	height: 48%;
+	color: #F90000;
+	border-style: solid;
+}
+
+h1 {
+	text-align: center;
+}
+
+.big {
+	font-weight: 600;
+	color: #F90000;
+	text-align: center;
+	font-size: 80px;
+}
+
+h3 {
+	text-align: center;
+	font-size: 30px;
+}
+</style>
+</head>
+<body>
+    <span id="taskInfo" style="background-color: #ff8;padding:10px;text-align:left;font-size:x-large;color:#111">
+    </span>
+	<div id="newsInBlock">
+		<h1 id="newScore">无信息</h1>
+		<h3 id="newInfo"></h3>
+		<button class="buttonStyle" style="background-color:#FFFAF0;color: #1B2426; margin: 0px auto;" onclick="sendToScreen()">发送到大屏幕</button>
+	</div>
+	
+
+    <table id="courseTable" align="center" width="100%"></table>
+    
+    
+    <script type="text/javascript">
+        var count=0;
+        var index=0;
+        var task=[];
+        var curTask=null;
+        var sending =false;
+        var judgeCount= 0;
+       
+		function submitCheck()
+		{
+			var gameNo = document.getElementById("gameNo").value;
+			var re = new RegExp('^[1-9]\d*$');
+			if(!re.test(gameNo))
+			{
+				alert("你输入的比赛号不是是数字！！");
+				return;
+			}
+		}
+		function viewPlay()
+		{
+			var no =  $("#playgroundNo").val;
+			if(no==0)
+			{
+				$('div').show(200);
+			}else
+			{
+				$('div').hide();
+				$('#selectBar').show();
+				$('#'+no).show();
+			}
+			
+		}
+
+		var sendToScreen = function()
+		{
+			
+			if(sending){
+				show("正在提交上一选手的得分！");
+				return;
+			}
+			if(task==null || task.length<=0)
+			{
+				alert('没有需要处理的提交分数');
+				return;
+			}
+			sending=true;
+			curTask = task[0];
+			var query = new Bmob.Query(Bmob.Object.extend('player1'));
+			query.get(curTask.id,{
+				success:function(res){
+					sending = false;
+					res.set("tag",3);
+					res.save();
+				    var msg='{"gameNo":"'+gameNo+'","courseNo":"'+curTask.courseNo+'","id":"'+curTask.id+'","no":"'+curTask.no+'","name":"'+curTask.name+'","project":"'+curTask.project+'","from":"'+curTask.from+'","level":"'+curTask.level+'","score":"'+curTask.score+'","cmd":"'+CMD.SendScreen+'"}';
+				    sendText(msg);
+				    freshScreen(jQuery.parseJSON(msg));
+					task.shift();
+					if(task.length>0){
+						$("#taskInfo").text('需要处理的打分个数：'+task.length);
+						curTask = task[0];
+						setBarInfo(curTask);
+						Tip('需要处理的打分个数：'+task.length);
+					}else{
+						$("#taskInfo").text('需要处理的打分个数：'+0);
+						$("#newScore").text("无新提交打分");
+						$("#newInfo").text("");
+						Tip('需要处理的打分个数：'+0);
+					}
+					},
+				error:function(object,e){
+						sending = false;
+						alert('选手打分发送大屏幕失败');
+					}
+				});
+			
+			
+		}
+		var initCourse = function(){
+			var q = new Bmob.Query(Bmob.Object.extend('game1'));
+			q.equalTo('no',gameNo);
+			q.find({
+				success:function(res){
+					if(res.length<=0){
+						$("body").append('<h1>没有此比赛的信息</h1>');
+					}else{
+						judgeCount = res[0].get("judgeCount");
+						var query = new Bmob.Query(Bmob.Object.extend('player1'));
+						query.equalTo('game',res[0].id);
+						query.select('courseNo');
+						_queryCount(query,query,setCourse)
+					}
+				},
+				error:function(e){
+					show(e.message);
+				}
+				});
+		}
+		var setCourse =function(res){
+			var all = [];
+			for(var i=0;i<res.length;i++){
+				all[res[i].get('courseNo')]=res[i].get('courseNo');
+			}
+			var index = 0;
+			for (var c in all) {
+				index++;
+				$("#courseTable").append('<tr id="c' + index + '"></tr>');
+				var no = c;
+				$("#c" + index).append('<td class="screen" id="cin' + no + '"></td>');
+				$("#cin" + no).append('<h1>场地 ' + no + ' </h1><h3 id="info' + no + '"></h3><span class="big" >最后得分：</span><span class="big" id="score' + no + '">无</span><h1 id="extraScore'+no+'"></h1>');
+				$("#cin" + no).append('<h3 id="judgerScore'+no+'"></h3>');
+			}
+		}
+		var handleTextMessage = function(message)
+		{
+	    	var type = message.type;//类型
+	    	var data = message.data;//消息体
+	    	if(type=='groupchat')
+	    	{
+	    		try{
+	        	var v = jQuery.parseJSON(data);
+	        	if(v.gameNo==gameNo && CMD.MainCommit==v.cmd){
+	    		task.push(v);
+	    		if(task.length==1)
+    				setBarInfo(v);
+				$("#taskInfo").text('需要处理的打分个数：'+task.length);
+
+	        	}
+		    	}
+			    catch(SyntaxError)
+			    {
+			    	console.log(SyntaxError);
+			    }
+		}
+	}
+
+		var freshScreen = function(v) {
+			var no = v.courseNo;
+			var score = v.score.split(",");
+			var p = Number(score[judgeCount+1] - score[judgeCount]).toFixed(2);
+			var extra = '';
+			if(p>=0)
+			{
+				extra='应得分：'+Number(score[judgeCount]).toFixed(2)+' 裁判长加小分：'+p;
+			}else{
+				extra='应得分：'+Number(score[judgeCount]).toFixed(2)+' 裁判长减小分：'+p;
+			}
+			var scoreInfo='';
+			for(var i = 0;i<judgeCount;i++)
+    		{
+    			scoreInfo+=' 裁判员 '+(i+1)+'：'+score[i];
+    		}
+    		$("#judgerScore"+no).text(scoreInfo);
+			$("#score"+no).text(Number(score[judgeCount+1]).toFixed(2));
+			$("#extraScore"+no).text(extra);
+			$("#info"+no).text('姓名：'+v.name+' 项目：'+v.project+' 组别：'+v.level+' 单位：'+v.from);
+		};
+		var setBarInfo = function(v){
+			var score = v.score.split(",");
+    		var content = '场地：'+v.courseNo+' 姓名：'+v.name+' 编号：'+v.no+' 项目：'+v.project+' 组别：'+v.level+' 单位：'+v.from+' 最后得分：'+Number(score[judgeCount+1]).toFixed(2);
+    		var scoreInfo='';
+    		for(var i = 0;i<judgeCount;i++)
+    		{
+    			scoreInfo+=' ● 裁判员 '+(i+1)+'：'+score[i];
+    		}
+    		scoreInfo+=' ● 应得分：'+Number(score[judgeCount]).toFixed(2);
+			$("#newScore").text(content);
+			$("#newInfo").text(scoreInfo);
+    		}			
+    </script>
+    <script src="js/im_base.js"></script>
+</body>
+</html>

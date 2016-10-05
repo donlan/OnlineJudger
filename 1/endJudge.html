@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			总裁判长/仲裁
+		</title>
+		<script src="sdk/jquery-1.11.1.js"></script>
+		<script type="text/javascript" src="js/bmob-min.js"></script>
+		<script type="text/javascript" src="js/Bmob.Config.js"></script>
+		<script src="sdk/strophe.js"></script>
+		<script src="sdk/json2.js"></script>
+		<script src="sdk/easemob.im-1.1.js"></script>
+		<script src="sdk/easemob.im-1.1.shim.js"></script>
+		<script src="easemob.im.config.js"></script>
+		<script type="text/javascript" src="dtGrid/dependents/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/PalyerSort.js" ></script>
+		<link rel="stylesheet" type="text/css" href="dtGrid/dependents/bootstrap/css/bootstrap.min.css" />
+		<!--[if lt IE 9]>
+		<script src="dtGrid/dependents/bootstrap/plugins/ie/html5shiv.js"></script>
+		<script src="dtGrid/dependents/bootstrap/plugins/ie/respond.js"></script>
+		<![endif]-->
+		<!--[if lt IE 8]>
+		<script src="dtGrid/dependents/bootstrap/plugins/ie/json2.js"></script>
+		<![endif]-->
+		<!-- font-awesome -->
+		<script type="text/javascript" src="js/pageQuery.js" ></script>
+		<link rel="stylesheet" type="text/css" href="dtGrid/dependents/fontAwesome/css/font-awesome.min.css" media="all" />
+		<!-- dtGrid -->
+		<script type="text/javascript" src="dtGrid/jquery.dtGrid.js">
+		</script>
+		<script type="text/javascript" src="dtGrid/i18n/zh-cn.js">
+		</script>
+		<link rel="stylesheet" type="text/css" href="dtGrid/jquery.dtGrid.css" />
+		<script type="text/javascript" src="dtGrid/dependents/datePicker/WdatePicker.js" defer="defer">
+		</script>
+		<link rel="stylesheet" type="text/css" href="dtGrid/dependents/datePicker/skin/WdatePicker.css" />
+		<link rel="stylesheet" type="text/css" href="dtGrid/dependents/datePicker/skin/default/datepicker.css" />
+		
+	</head>
+	<style type="text/css">body {
+	margin: 0px;
+	padding: 0px;
+}
+
+td {
+	text-align: center;
+}
+
+th {
+	text-align: center;
+	color: #FFFAF0;
+	background-color: forestgreen;
+	padding: 8px;
+}
+
+.normalInput {
+	font-size: large;
+	height: 30px;
+	min-width: 100px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: aquamarine;
+	border-radius: 20px;
+	padding-left: 10px;
+	padding-right: 10px;
+	background-color: azure;
+	margin-top: 10px;
+}
+
+button {
+	background-color: #FF7400;
+	color: #F5F5DC;
+	border: none;
+	width: 100%;
+	height: 60px;
+	font-size: x-large;
+	border: none;
+}
+
+.screen {
+	text-align: center;
+	background-color: #FFFAF0;
+	padding: 12px;
+	margin:20px;
+	border-style: solid;
+	border-width: 5px;
+	border-color: #F0AD4E;
+	width: 48%;
+	height: 48%;
+	color: #F90000;
+	border-style: solid;
+}
+h1 {
+	text-align: center;
+}
+
+.big {
+	font-weight: 600;
+	color: #F90000;
+	text-align: center;
+	font-size: 80px;
+}
+
+h3 {
+	text-align: center;
+	font-size: 30px;
+}
+.QUERY {}</style>
+	<body >
+		<div>
+			<table width="100%" frame="rhs" cellspacing="0px">
+				<tr>
+					<td>
+						<button class="tab" id="tabScreen">
+							比赛大屏幕
+						</button>
+					</td>
+					<td>
+						<button class="tab" id="tabAll">
+							所有选手信息
+						</button>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div id="screen">
+			<table id="screenTable" width="100%" frame="border" style="margin-top: 40px;">
+			</table>
+		</div>
+		<div id="allUI">
+			<h2 id="tableTittle" align="center">
+				比赛
+			</h2>
+			<div id="dtGridToolBarContainer_2_1_1">
+			</div>
+			<div id="dtGridContainer_2_1_1">
+			</div>
+			<table id="playerTable" align="center" width="98%" cellspacing="0px" frame="void" border="1px" bordercolor="forestgreen">
+			</table>
+		</div>
+		
+		
+		<script src="js/im_base.js"></script>
+		
+		<script>var dtGridColumns = [{
+	id: 'user_id',
+	title: 'ID',
+	type: 'number',
+	columnClass: 'table_column',
+	headerClass: "table_header",
+	hide: true
+}, {
+	id: 'user_rank',
+	title: '次序',
+	type: 'number',
+	columnClass: 'table_column',
+	headerClass: "table_header",
+	resolution:function(value, record, column, grid, dataNo, columnNo){
+	        var content = '';
+	        if(dataNo<=2){
+	            content += '<span style="background:#FF6C3B;padding:2px 10px;color:white;">'+(dataNo+1)+'</span>';
+	        }else{
+	        	content+=(dataNo+1);
+	        }
+	        return content;
+	    }
+}, {
+	id: 'user_name',
+	title: '姓名',
+	type: 'string',
+	columnClass: 'table_column',
+	headerClass: "table_header",
+	fastQuery: true,
+	fastQueryType: 'lk'
+},{
+	id: 'user_no',
+	title: '编号',
+	type: 'string',
+	columnClass: 'table_column',
+	headerClass: "table_header",
+	fastQuery: true,
+	fastQueryType: 'lk'
+}, {
+	id: 'user_age',
+	title: '年龄',
+	type: 'number',
+	columnClass: 'table_column',
+	headerClass: "table_header"
+}, {
+	id: 'user_sex',
+	title: '性别',
+	type: 'string',
+	columnClass: 'table_column',
+	headerClass: "table_header"
+	
+},{
+	id: 'user_course',
+	title: '场地',
+	type: 'string',
+	columnClass: 'table_column',
+	headerClass: "table_header",
+	fastQuery: true,
+	fastQueryType: 'lk'
+}, {
+	id: 'user_project',
+	title: '项目',
+	type: 'string',
+	columnClass: 'table_column',
+	headerClass: "table_header",
+	fastQuery: true,
+	fastQueryType: 'lk'
+}, {
+	id: 'user_level',
+	title: '组别',
+	type: 'string',
+	columnClass: 'table_column',
+	headerClass: "table_header",
+	fastQuery: true,
+	fastQueryType: 'eq'
+}, {
+	id: 'user_from',
+	title: '单位',
+	type: 'string',
+	columnClass: 'table_column',
+	headerClass: "table_header",
+	fastQuery: true,
+	fastQueryType: 'lk'
+}];
+var datas = new Array();
+var grid;
+var rank =1;
+$("#tabAll").toggleClass('tab');
+$("#userQuery").click(function() {
+	//显示查询到的选手信息的列表
+	$("#screen").hide();
+	$("#allUI").hide();
+	queryPlayers();
+});
+$("#tabAll").click(function() {
+	//显示所有选手信息的列表
+	$("#allUI").show();
+	//$("#queryUI").hide();
+	$("#screen").hide();
+	$("#tabAll").toggleClass('tab');
+	$("#tabScreen").toggleClass('tab');
+});
+$("#tabScreen").click(function() {
+	//大屏幕信息
+	$("#allUI").hide();
+	//$("#queryUI").hide();
+	$("#screen").show();
+	$("#tabAll").toggleClass('tab');
+	$("#tabScreen").toggleClass('tab');
+});
+
+var initGameID = function() {
+	var query = new Bmob.Query(Bmob.Object.extend('game1'));
+	query.equalTo('no', gameNo);
+	query.equalTo('ower', ower);
+	query.find({
+		success: function(res) {
+			if (res.length <= 0)
+				return null;
+			gameID = res[0].id;
+			judgeCount = res[0].get('judgeCount');
+			$("#tableTittle").text(res[0].get("name"));
+			initScreen(gameID);
+			return gameID;
+		},
+		error: function(e) {
+			console.log(e);
+			return null;
+		}
+	});
+};
+var initAllPlayer = function(players) {
+	for (var i = 1; i <= judgeCount; i++) {
+		var col = {
+			id: 'user_score' + i,
+			title: '裁判员 ' + i,
+			type: 'number',
+			columnClass: 'table_column',
+			headerClass: "table_header"
+			
+		};
+		dtGridColumns.push(col);
+	}
+	dtGridColumns.push({
+		id: 'user_score',
+		title: '平均得分',
+		type: 'number',
+		columnClass: 'table_column',
+		headerClass: "table_header"
+		
+	});
+	dtGridColumns.push({
+		id: 'alertScore',
+		title: '加减分',
+		type: 'number',
+		columnClass: 'table_column',
+		headerClass: "table_header",
+		fastQuery: true,
+		fastQueryType: 'eq'
+	});
+	dtGridColumns.push({
+		id: 'user_endScore',
+		title: '最后得分',
+		type: 'number',
+		columnClass: 'table_column',
+		headerClass: "table_header",
+		fastQuery: true,
+		fastQueryType: 'eq'
+	});
+	
+	var index = 1;
+	for (var n = 0;n<players.length;n++) {
+		p = players[n];
+		var user = new Object();
+		user.user_id = p.id;
+		user.user_name = p.get("name");
+		user.user_rank = (n+1);
+		user.user_from = p.get("from");
+		user.user_project = p.get("project");
+		user.user_level = p.get("level");
+		user.user_age = p.get("age");
+		user.user_sex = p.get("sex");
+		user.user_no = p.get('no');
+		user.user_course = p.get('courseNo');
+		for (var i = 1; i <= judgeCount; i++) {
+			user['user_score' + i] = p.get('score' + i);
+		}
+		user.alertScore = Number(p.get("endScore")-p.get("score")).toFixed(2);
+		user.user_score = Number(p.get("score")).toFixed(2);
+		user.user_endScore = Number(p.get("endScore")).toFixed(2);
+		datas.push(user);
+		
+	}
+	var dtGridOption = {
+		lang: 'zh-cn',
+		ajaxLoad: false,
+		exportFileName: '用户列表',
+		datas: datas,
+		columns: dtGridColumns,
+		gridContainer: 'dtGridContainer_2_1_1',
+		toolbarContainer: 'dtGridToolBarContainer_2_1_1',
+		tools: 'refresh|faseQuery|advanceQuery|export[excel,csv,pdf,txt]|print',
+		pageSize: 10,
+		pageSizeLimit: [10, 20, 50,100,200,500,1000,2000]
+	};
+	grid = $.fn.DtGrid.init(dtGridOption);
+	grid.load();
+};
+var index = 0;
+var initScreen = function(id) {
+	if (id == null) {
+		show('这个比赛没有选手！！！');
+		return;
+	}
+	var query = new Bmob.Query(Bmob.Object.extend('player1'));
+	query.equalTo('game', id);
+	query.notEqualTo('tag',0);
+	_queryCount(query,query,setScreen);
+};
+
+var setScreen = function(res){
+	if (res.length <= 0) {
+		alert('没有场地信息');
+		return;
+	}
+	res.sort(BmobprojectLevelSortFunc);
+	for (var i = 0; i < res.length; i++) {
+		players[res[i].id] = res[i];
+		Levels[res[i].get("level")] = res[i].get("level");
+		Projects[res[i].get("project")] = res[i].get("project");
+		Courses[res[i].get('courseNo')] = res[i].get('courseNo');
+	}
+	initAllPlayer(res);
+	var index = 0;
+	for (var c in Courses) {
+		index++;
+		$("#screenTable").append('<tr id="c' + index + '"></tr>');
+		var no = c;
+		$("#c" + index).append('<td class="screen" id="cin' + no + '"></td>');
+		$("#cin" + no).append('<h1>场地 ' + no + ' </h1><h3 id="info' + no + '"></h3><span class="big" >最后得分：</span><span class="big" id="score' + no + '">无</span><h1 id="extraScore' + no + '"></h1>');
+		$("#cin" + no).append('<h3 id="judgerScore'+no+'"></h3>');
+	}
+}
+var gameID = null;
+var players = [];
+var judgeCount = 0;
+var Levels = [];
+var Projects = [];
+var Courses = [];
+var handleTextMessage = function(message) {
+	var type = message.type; //类型
+	var data = message.data; //消息体
+	if (type == 'groupchat') {
+		try {
+			var v = jQuery.parseJSON(data);
+			if (v.gameNo == gameNo) {
+				switch (v.cmd) {
+					case CMD.SendScreen:
+						freshScreen(v);
+						break;
+					case CMD.MainCommit:
+						freshPlayer(v);
+					break;
+				}
+			}
+		} catch (SyntaxError) {
+			console.log(SyntaxError);
+		}
+	}
+}
+var freshPlayer = function(c) {
+	var id = c.id;
+	var score = c.score.split(",");
+	for(var i = 0;i<datas.length;i++)
+	{
+		var user = datas[i];
+		console.log(user.user_id+","+id);
+		if(user.user_id == id)
+		{
+			for (var s = 1; s <= judgeCount; s++) {
+				user['user_score' + s] = score[s - 1]
+			}
+			user.user_score = Number(score[judgeCount]).toFixed(2);
+			user.user_endScore = Number(score[judgeCount + 1]).toFixed(2);
+			user.alertScore = Number(score[judgeCount + 1]-score[judgeCount]).toFixed(2);
+			break;
+		}
+	}
+	dataSort(datas,judgeCount);
+	grid.refresh(true);
+};
+var freshScreen = function(v) {
+	var no = v.courseNo;
+	var score = v.score.split(",");
+	var p = Number(score[judgeCount + 1] - score[judgeCount]).toFixed(2);
+	var extra = '';
+	if (p >= 0) {
+		extra = '应得分：' + Number(score[judgeCount]).toFixed(2) + ' 裁判长加小分：' + p;
+	} else {
+		extra = '应得分：' + Number(score[judgeCount]).toFixed(2) + ' 裁判长减小分：' + p;
+	}
+	var scoreInfo='';
+	for(var i = 0;i<judgeCount;i++)
+	{
+		scoreInfo+=' 裁判员 '+(i+1)+'：'+score[i];
+	}
+	$("#judgerScore"+no).text(scoreInfo);
+	$("#score" + no).text(Number(score[judgeCount + 1]).toFixed(2));
+	$("#extraScore" + no).text(extra);
+	$("#info" + no).text("●姓名：" + v.name + ' ●项目：' + v.project + ' ●组别：' + v.level + ' ●单位：' + v.from);
+};
+</script>
+
+
+	</body>
+</html>

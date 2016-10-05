@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head></head>
+	<body>
+		<script>
+			
+			console.log(((8.2*100 + 8.18*100 + 8.25*100) / 3) / 100);
+			x = 8.209999999999999;
+			x  = x * 1000 / 1000;
+			console.log(x+"_"+Number(x - 0.005).toFixed(2));
+			console.log(Number(8.21-0.005).toFixed(2));
+			
+			var judgeCount = 5;
+			var a = new Array(judgeCount + 2);
+	var b = new Array(judgeCount);
+	
+	a=[8.4,8.2,8.12,8.18,8.25];
+	b=[8.4,8.2,8.12,8.18,8.25];
+//	for (var i = 1; i <= judgeCount; i++) {
+//		var str = $("#judge" + i).text();
+//		var s = Number(Number(str.substring(str.indexOf(":") + 1)).toFixed(2)).valueOf();
+//		if (isNaN(s) || s <= 0 || s > 10) {
+//			return -1;
+//		}
+//		a[i - 1] = s;
+//		b[i - 1] = s;
+//	}
+	b.sort(function(a,b){
+		if(Number(a)>Number(b))
+		return 1;
+		if(Number(a)<Number(b))
+		return -1;
+		return 0;
+	});
+	var s = 0.0;
+	if (judgeCount > 3) {
+		for (var i = 1; i < judgeCount - 1; i++) {
+			s = Number(s) + Number(b[i]);
+		}
+		s = (s / (judgeCount - 2));
+	} else {
+		for (var i = 0; i < judgeCount; i++) {
+			s = s + b[i];
+		}
+		s = s / judgeCount;
+	}
+	console.log(s);
+	console.log(Number(Number(s).toFixed(2)).valueOf()>s)
+	if(s){
+		if(Number(Number(s).toFixed(2)).valueOf()>s){
+			a[judgeCount] = Number(Number(s-0.005).toFixed(2)).valueOf();
+			console.log(Number(s*100 / 100).toFixed(2));
+		}
+		else
+			a[judgeCount] = Number(Number(s).toFixed(2)).valueOf();
+	}
+	console.log(a);
+		</script>
+	</body>
+</html>

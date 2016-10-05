@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>云笔记</title>
+		
+		<style type="text/css">
+			.top{
+				background: #228B22;
+				min-height: 100px;
+				color: dimgrey;
+			}
+			.left{
+				border-right: solid lightslategrey;
+				border-right-width: 2px;
+				padding: 20px;
+				float: left;
+				width: 40%;
+				height: 100%;
+			}
+			.right{
+				padding: 20px;
+				float: left;
+				width: 50%;
+				height: 100%;
+			}
+			.btn{
+				border: hidden #A9DBA9;
+				border-radius: 8px;
+				background-color: #008200;
+				color: white;
+				font-size: larger;
+				align-content: center;
+			}
+			#in_content{
+				width: 90%;
+				height: 100%;
+				min-height: 200px;
+			}
+			.tag{
+				border: solid #EB9316;
+				border-radius: 6px;
+				padding: 6px;
+				border-width: 1px;
+				color: #008200;
+				font-size: large;
+				text-align: center;
+			}
+			.noteItem{
+				border-bottom: solid #E38D13;
+				border-bottom-width: 2px;
+				border-left: none;
+				border-right: none;
+				border-top: none;
+			}
+			.deleteBtn{
+				position: relative;
+				float: right;
+				width: 40px;
+				height: 40px;
+				background: url(../images/close.png);
+				background-repeat: no-repeat;
+			}
+			.editBtn{
+				position: relative;
+				float: right;
+				width: 40px;
+				height: 40px;
+				margin-right: 60px;
+				background: url(../images/document_edit_64px.png);
+				background-repeat: no-repeat;
+			}
+			.loginui{
+				border: solid #DCDCDC;
+				background-color: whitesmoke;
+				text-align: center;
+				position: fixed;
+				vertical-align: middle;
+				z-index: 200;
+				top: 0;
+				left: 0;
+				height: 100px;
+				width: 100%;
+				font-size: large;
+			}
+			.fade{
+				top: 0;
+				left: 0;
+				position: fixed;
+				float: left;
+				width: 100%;
+				height: 100%;
+				z-index: 99;
+				opacity: 0.7;
+				background-color: #A9DBA9;
+			}
+		</style>
+		
+		<script type="text/javascript" src="../js/jquery-2.1.3.min.js" ></script>
+		<script type="text/javascript" src="../bmob-min.js" ></script>
+		<script type="text/javascript" src="../js/bmobSocketIo.js" ></script>
+		<script type="text/javascript" src="../js/Bmob.Config.js" ></script>
+	</head>
+	<body>
+		<div class="top"></div>
+		<div class="left">
+			
+		</div>
+		<div class="right">
+			<p>标题</p><input id="in_tittle" /><br>
+			<p>TAG</p><input  id="in_tag" /><br>
+			<p>内容</p><textarea id="in_content"></textarea><br>
+			
+			<button id="save" class="btn" style="min-width: 80px;min-height: 40px; margin:20px auto;">保存</button>
+			<button id="new" class="btn" style="min-width: 80px;min-height: 40px; margin:20px auto; background-color: #EB9316;visibility: hidden;">新建</button>
+		</div>
+		
+		
+		<script>
+			BmobNoteInit();
+			var notes=[];
+			var curId = null;
+			var appendNote =function(id,tittle,tag,content,createTime){
+				var tagTmp ="";
+				var tags = tag.split(" ");
+				for(var t in tags){
+					tagTmp += '<span class="tag">'+tags[t]+'</span>';
+				}
+				var delTmp ='<img class="deleteBtn" id="del_'+id+'" onClick="noteDelete(this)"></img>';
+				var editTmp ='<img class="editBtn" id="edit_'+id+'"  onClick="noteEdit(this)"></img>';
+				var contentTmp = '<br/><p id="content_"'+id+'>'+content+'</p>';
+				var infoTmp ='<p>'+createTime+'</p>';
+				$(".left").append('<div class="noteItem" id="div_'+id+'">'+delTmp+editTmp+'<h2 id="tittle_'+id+'">'+tittle+'</h2>'+tagTmp+contentTmp+infoTmp+'</div>')
+			}
+			
+			var appendNoteByBmob = function(bmobRes){
+				appendNote(bmobRes.id,bmobRes.get('tittle'),bmobRes.get('tag'),bmobRes.get('content'),bmobRes.createdAt);
+			}
+			var noteDelete = function(divObj){
+				var id = (divObj.id).substring(4);
+				var query = new Bmob.Query(Bmob.Object.extend('note'));
+				query.equalTo('objectId',id);
+				
+				query.destroyAll({
+					success:function(o){
+						show('删除成功','',1000);
+						$("#div_"+id).remove();
+					},
+					error:function(o,e){
+						show(e.message);
+					}
+				});
+			}
+			var noteEdit = function(divObj){
+				var id = (divObj.id).substring(5);
+				$("#in_tittle").val(notes[id].get('tittle'));
+				$("#in_tag").val(notes[id].get('tag'));
+				$("#in_content").val(notes[id].get('content'));
+				$("#save").text("保存修改");
+				$("#new").show(300);
+				curId = id;
+			}
+			$("#new").click(function(){
+				$("#in_tittle").val("");
+				$("#in_tag").val("");
+				$("#in_content").val("");
+				$("#save").text("保存");
+				$(this).hide(300);
+				curId = null;
+			});
+			$("#save").click(function(){
+				if(curId==null){
+					var  Note = Bmob.Object.extend('note');
+					var note = new Note();
+					note.set('tittle',$("#in_tittle").val());
+					note.set('tag',$("#in_tag").val());
+					note.set('content',$("#in_content").val());
+					note.set("user",Bmob.User.current());
+					note.save(null,{
+						success:function(obj){
+							notes[obj.id] = obj;
+							appendNote(obj.id,$("#in_tittle").val(),$("#in_tag").val(),$("#in_content").val(),obj.createdAt);
+						},
+						error:function(obj,e){
+							show(e.message);
+						}
+					});
+				}else{
+					var query = new Bmob.Query(Bmob.Object.extend('note'));
+					query.get(curId,{
+						success:function(note){
+							note.set('tittle',$("#in_tittle").val());
+							note.set('tag',$("#in_tag").val());
+							note.set('content',$("#in_content").val());
+							note.save();
+							show('修改成功','',1000);
+						},
+						error:function(o,e){
+							show(e.message);
+						}
+					});
+				}
+			});
+			
+			var load =function(){
+				var query = new Bmob.Query(Bmob.Object.extend('note'));
+				query.equalTo("user",Bmob.User.current());
+				query.find({
+					success:function(res){
+						if(res.length>0){
+							for(var i =0,s = res.length;i<s;i++){
+								notes[res[i].id] = res[i];
+								appendNoteByBmob(res[i]);
+							}
+						}else{
+							show("无笔记");
+						}
+					},
+					error:function(e){
+						show(e.message)
+					}
+				});
+			}
+			
+			
+			var showLoginUI = function(){
+				$("body").append("<div class='fade'></div>");
+				var usernameTmp = '<label>用户名：</label><input id="username" placeholder="用户名"/>'
+				var pwsTmp = '<label>密 码： </label><input type="password" id="pwd" placeholder="密码"/>';
+				var loginTmp ='<div class="loginui" id="loginDiv"><div style="margin-top:40px">'+usernameTmp+pwsTmp+'<button id="loginBtn" onClick="login()">登录</button></div></div>'
+				$("body").append(loginTmp);
+			}
+			$("#loginBtn").keydown(function(event){
+				if(event.keyCode==13){
+					login();
+				}
+			});
+			var login = function(){
+				var name = $("#username").val();
+				var pwd = $("#pwd").val();
+				console.log(name+","+pwd);
+				Bmob.User.logIn(name,pwd,{
+					success:function(){
+						load();
+						$("#loginDiv").remove();
+						$(".fade").remove();
+					},
+					error:function(user,e){
+						show(e.message);
+					}
+				});
+			}
+			
+			$(document).ready(function(){
+				if(Bmob.User.current()){
+					load();
+				}else{
+					showLoginUI();
+				}
+			});
+		</script>
+	</body>
+</html>

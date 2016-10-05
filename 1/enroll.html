@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+			<script type="text/javascript" src="js/ImageCropper.js">
+		</script>
+		<script type="text/javascript" src="js/jquery.min.js" >
+		</script>
+		<script type="text/javascript" src="js/comm.js" >
+		</script>
+		<script type="text/javascript" src="js/linkagesel-min.js" >
+		</script>
+		<script type="text/javascript" src="js/projectData.js" >
+		</script>
+		<script src="js/bmob-min.js">
+		</script>
+		<script src="js/Bmob.Config.js">
+		</script>
+		<script type="text/javascript" src="dtGrid/dependents/datePicker/WdatePicker.js" >
+		</script>
+		<script src="js/plugins/angular/angular.min.js" type="text/javascript">
+		</script>
+		<script type="text/javascript" src="js/cityData.js">
+		</script>
+		<script type="text/javascript" src="js/IIInsomniaCityPicker.js">
+		</script>
+		<script type="text/javascript" src="js/select.js" ></script>
+		<link rel="stylesheet" href="js/plugins/bootstrap/dist/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/city-picker.css">
+		<title>
+			报名
+		</title>
+		<style type="text/css">tr {
+	width: 100%;
+	border-radius: 30px;
+	height: 60px;
+}
+
+.tdAlign{
+	text-align: right;
+}
+.leftText {
+	text-align: center;
+	width: 80px;
+	height: 100%;
+}
+
+li {
+	margin-top: 10px;
+	font-size: x-large;
+}
+
+
+.inputText {
+	border-radius: 6px;
+	padding-left: 20px;
+	padding-right: 20px;
+	min-width: 160px;
+	height: 36px;
+	border: #008040 dotted;
+	border-width: 1px;
+	background-color: #fff;
+}
+
+.text {
+	border: #008040 dotted;
+	border-width: 1px;
+	min-width: 100px;
+	height: 35px;
+	border-radius: 4px;
+	background-color: #FFF;
+}
+
+.login {
+	margin-bottom: 20px;
+	padding-left: 20px;
+	padding-right: 20px;
+	min-width: 400px;
+	height: 50px;
+	border-radius: 3px;
+	border: none;
+	background-color: #83A6A0;
+	margin-top: 30px;
+	background-color: #f30;
+	color: #FFFAF0;
+	font-size: x-large;
+}
+
+body {
+	margin: 0px;
+	padding: 0px;
+	background-color: #F5F5DC;
+	font-family: "新宋体";
+}
+
+.about {
+	z-index: 200;
+	position: fixed;
+	bottom: 1px;
+	right: 1px;
+	margin-top: 30px;
+	min-height: 300px;
+	border: solid #F5F5DC;
+	border-radius: 10px;
+	border-width: 1px;
+	background-color: #DA4F49;
+	color: #F3F6FA;
+	padding: 12px;
+}
+
+button {
+	width: 80px;
+	height: 50%;
+	border-width: 1px;
+	background-color: #0480BE;
+	border: none;
+	border-radius: 50px;
+	color: #FFFAF0;
+	font-size: large;
+	position: absolute;
+}
+
+.b {
+	margin-top: 20px;
+	font-weight: bold;
+	background-color: #FCFCFC;
+	border: solid #9E9E9E;
+	border-width: 1px;
+	border-style: dashed;
+	border-radius: 8px;
+}
+
+.change {
+	width: 80px;
+	height: 50%;
+	background: #DF8505;
+	color: white;
+	border: dashed #E6DB26;
+}
+
+a {
+	text-decoration: none;
+	color: #333;
+}
+
+a:hover {
+	text-decoration: none;
+	color: #f00;
+}
+
+#container {
+	position: fixed;
+	bottom: 10px;
+	right: 10px;
+	background: blanchedalmond;
+	border: dashed #B3B3B3;
+	border-width: 2px;
+	border-radius: 4px;
+}
+
+#wrapper {}
+
+#cropper {
+	margin-left: 20px;
+	border: 1px solid #ccc;
+}
+
+#previewContainer {}
+
+.preview {
+	border: 1px solid #ccc;
+}
+
+#selectBtn {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 119px;
+	height: 27px;
+	background: url(img/select.png);
+}
+
+#saveBtn {
+	position: absolute;
+	left: 150px;
+	top: 0px;
+	width: 67px;
+	height: 27px;
+	background: url(img/save.png);
+}
+#closeBtn{
+	position: absolute;
+	left: 380px;
+	top: 0px;
+	width: 48px;
+	height: 48px;
+	background: url(css/error.png);
+}
+#rotateLeftBtn {
+	position: absolute;
+	left: 0px;
+	top: 315px;
+	width: 100px;
+	height: 22px;
+	padding-left: 25px;
+	padding-top: 2px;
+	background: url(img/left.png) no-repeat;
+}
+
+#rotateRightBtn {
+	position: absolute;
+	left: 205px;
+	top: 315px;
+	width: 62px;
+	height: 22px;
+	padding-right: 25px;
+	padding-top: 2px;
+	background: url(img/right.png) no-repeat right;
+}</style>
+		<script type="text/javascript">var cropper;
+var ID;
+var headURL;
+function selectImage(fileList) {
+	cropper.loadImage(fileList[0]);
+}
+
+function rotateImage(e) {
+	switch (e.target.id) {
+		case "rotateLeftBtn":
+			cropper.rotate(-90);
+			break;
+		case "rotateRightBtn":
+			cropper.rotate(90);
+			break;
+	}
+}
+
+function saveImage() {
+	var file160 = document.getElementById("preview160");
+	var file50 = document.getElementById("preview50");
+	headURL = file160.toDataURL();
+	$("#container").hide(100);
+	document.getElementById("headImg").src = headURL;
+}
+
+function trace() {
+	if (typeof(console) != "undefined") console.log(Array.prototype.slice.apply(arguments).join(" "));
+};</script>
+	</head>
+	<body  onload="init()" ginger_software_stylesheet="true" ginger_software_doc="true">
+		<div id="gameInfo" style="background-color: #0F192A; width: 100%; min-height: 100px; line-height:90px; font-size: xx-large;margin: auto; text-align: center;color: #F3F6FA;">
+		</div>
+		<div>
+			<button class="change" id="playerBtn">
+				个人
+			</button>
+			<button class="change" style="margin-top: 130px;" id="teamBtn">
+				代表队
+			</button>
+		</div>
+		<div id="container">
+			<label id="saveBtn"  onclick="saveImage()"></label>
+			<label id="closeBtn" onclick="$('#container').hide(100)"></label>
+			<a id="selectBtn" href="javascript:void(0);" onclick="document.getElementById(&#39;input&#39;).click();"></a>
+			<input type="file" id="input" style="visibility: hidden;"onchange="selectImage(this.files)" accept="image/*"/>
+			<div id="wrapper" style="margin-top: 40px;">
+				<canvas id="cropper" width="300" height="300"></canvas>
+				<div id="previewContainer" style="float: right; margin-left: 40px;">
+					<canvas id="preview160" width="160" height="160" class="preview"></canvas>
+					<span style="display:block;width:100%;padding-top:5px;text-align:center;">大图:160x160</span>
+					<canvas id="preview50" width="50" height="50" style=" margin-left: 50px;" class="preview"></canvas>
+					<span style="text-align:center;">小图:50x50</span>
+				</div>
+			</div>
+			
+		</div>
+		<div style="width: 90%;float:left;text-align: center;padding: 20px;font-size: larger;">
+			<div id="playerUI">
+				<table align="center" class="b">
+					<tr>
+						<td>
+							<input id="name" class="inputText" placeholder="姓名">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input id="from" class="inputText" placeholder="单位">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input id="teamID" class="inputText" placeholder="代表队ID">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input id="tel" class="inputText" placeholder="联系电话">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input id="idCard" class="inputText" placeholder="身份证号码">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input id="vipId" class="inputText" placeholder="中国武术协会会员证号码">
+							</li>
+						</td>
+					</tr>
+					<tr>
+							
+						<td>
+							<label>项目:</label>
+							<select id="project">
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label>组别:</label>
+							<select id="level">
+							</select>
+							<label>根据当前年份减去出生年份计算</label>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label>性别:</label>
+							<label><input type="radio" name="sex" value="男" checked="checked"/>男</label>
+							<label><input type="radio" name="sex" value="女">女</label>
+						</td>
+					</tr>
+					<tr>
+						<td>
+						<img id="headImg" style="width: 60px;height: 60px;position: static;" src="images/documents_icon_folder.png" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input id="uploadHead" type="button" class="login" style="width: auto;background: #06CB45;" value="上传头像" >
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input id="register" type="button" class="login"  value="立即报名" >
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div id="teamUI">
+				<table align="center" class="b">
+					<tr>
+						<td align="right">
+							代表队全称：
+						</td>
+						<td align="left">
+							<input class="text" id="teamName">
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+							领队姓名：
+						</td>
+						<td align="left">
+							<input class="text" id="leaderName">
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+							领队性别：
+						</td>
+						<td align="left">
+							<input type="radio" name="leaderSex" value="男" checked="checked">
+							男
+							<input type="radio" name="leaderSex" value="女">
+							女
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+							领队电话：
+						</td>
+						<td align="left">
+							<input class="text" id="leaderPhone">
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+							教练姓名：
+						</td>
+						<td align="left">
+							<input class="text" id="judgeName">
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+							教练性别：
+						</td>
+						<td align="left">
+							<input type="radio" name="judgeSex" value="男" checked="checked">
+							男
+							<input type="radio" name="judgeSex" value="女">
+							女
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+							教练电话：
+						</td>
+						<td align="left">
+							<input class="text" id="judgePhone">
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+							省区市：
+						</td>
+						<td align="left">
+							<input type="text" id="cityChoice" class="text" placeholder="请输入省区市">
+						</td>
+					</tr>
+					<tr>
+						<td align="right">
+							联系地址：
+						</td>
+						<td align="left">
+							<input id="addr" style="width: 300px;" placeholder="请输入详细联系地址" type="text" class="text" />
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<input id="teamRegister" type="button" class="login"  value="代表队报名" >
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="about" onclick="$(this).hide()">
+			<h2 align="center" >
+				关于比赛
+			</h2>
+			<h3 id="aboutText">
+			</h3>
+			<ul>
+				<li>
+					请确保各项信息准确无误，以免影响你的报名
+				</li>
+				<li>
+					代表队报名后获取唯一的ID值是运动员报名的首要条件，因此需要先进行代表队报名，然后将唯一的ID值告知需要报名的运动员
+				</li>
+			</ul>
+			<p style="font-size:large" align="right">点击可关闭此提示框</p>
+		</div>
+		<script>
+var clickable = true;
+var gameNo = null;
+var GAME = null;
+var myTeam = null;
+var levelSelect;
+var optProject = {
+data: projectData,
+select: '#project',
+head: false
+};
+var cityPicker = new IIInsomniaCityPicker({
+data: data,
+target: 'cityChoice',
+valType: 'k-v',
+hideCityInput: {
+name: 'city',
+id: 'city'
+},
+hideProvinceInput: {
+name: 'province',
+id: 'province'
+}
+});
+cityPicker.init();
+var optProjectSelect = new LinkageSel(optProject);
+var getUrlKey = function(name) { 
+	var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i'); 
+	var r = window.location.search.substr(1).match(reg); 
+	if (r != null) {
+	return unescape(r[2]); 
+	}
+	return null; 
+}
+var init = function() {
+BmobInit();
+cropper = new ImageCropper(200, 200, 120, 120);
+cropper.setCanvas("cropper");
+cropper.addPreview("preview160");
+cropper.addPreview("preview50");
+if(!cropper.isAvaiable())
+{
+show("您的浏览器不支持使用头像上传功能，请更换其他浏览器！");
+}
+ID = getUrlKey('id');
+if(ID==null)
+{
+show("请确保你的报名链接是否正确");
+return;
+}
+levelSelect = $.Select.init('level',mData);
+var query = new Bmob.Query(Bmob.Object.extend('game1'));
+query.get(ID, {
+success: function(res) {
+GAME = res;
+gameNo = res.get("no");
+$("#gameInfo").text(res.get("name"));
+$("#aboutText").text(res.get("des"));
+},
+error: function(obj, e) {
+console.log(e);
+}
+});
+}
+	$("#container").hide();
+	$("#teamBtn").removeClass("change");
+	$("#teamUI").hide();
+	$("#playerBtn").css('z-index',100);
+	$("#teamBtn").css('z-index',1);
+	$("#teamBtn").click(function() {
+		$("#teamBtn").addClass("change");
+		$("#playerBtn").removeClass("change");
+		$("#playerUI").hide();
+		$("#teamUI").show();
+		$(this).css('z-index',100);
+		$("#playerBtn").css('z-index',1);
+	});
+	$("#playerBtn").click(function() {
+		$("#playerBtn").addClass("change");
+		$("#teamBtn").removeClass("change");
+		$("#playerUI").show();
+		$("#teamUI").hide();
+		$(this).css('z-index',100);
+		$("#teamBtn").css('z-index',1);
+	});
+	$("#uploadHead").click(function(){
+			$("#container").show(100);
+	});
+$("#teamRegister").click(function() {
+var teamName = $("#teamName").val();
+	if (teamName == null) {
+		show("请输入代表对名");
+		return;
+	}
+	var leaderName = $("#leaderName").val();
+	if (!/^[\u4e00-\u9fa5 ]{2,5}$/.test(leaderName)) {
+		show("请输入正确的领队的名字（2-5个汉字）");
+		return;
+	}
+	var judgeName = $("#judgeName").val();
+	if (!/^[\u4e00-\u9fa5 ]{2,5}$/.test(judgeName)) {
+		show("请输入正确的教练的名字（2-5个汉字）");
+		return;
+	}
+var leaderPhone = $("#leaderPhone").val();
+var judgePhone = $("#judgePhone").val();
+if (!/^[0-9]{11}$/.test(leaderPhone)) {
+show('请输入领队的正确的手机号码！');
+return;
+}
+if (!/^[0-9]{11}$/.test(judgePhone)) {
+show('请输入教练的正确的手机号码！');
+return;
+}
+if($("#cityChoice").val().length<=0){
+show("请输入省市区");
+return;
+}
+if($("#addr").val().length<=0){
+show("请输入联系地址");
+return;
+}
+if(!clickable){
+	show("正在处理您的报名请求，请稍等再试");
+	return;
+}
+clickable = false;
+var q  = new Bmob.Query(Bmob.Object.extend('team'));
+q.equalTo('teamName',teamName);
+q.find({
+	success:function(res){
+		if(res.length>0){
+			show("此代表对名称已存在！");
+		}else{
+		var Team = Bmob.Object.extend('team');
+		var teamObj = new Team();
+		teamObj.set('teamName', teamName);
+		teamObj.set('captainName', leaderName);
+		teamObj.set('captainPhone', leaderPhone);
+		teamObj.set('captainSex', $("input[name='leaderSex']:checked").val());
+		teamObj.set('coachName', judgeName);
+		teamObj.set('coachPhone', judgePhone);
+		teamObj.set('city',$("#cityChoice").val());
+		teamObj.set('addr',$("#addr").val());
+		teamObj.set('coachSex', $("input[name='judgeSex']:checked").val());
+		teamObj.save(null, {
+			success:function(res) {
+				clickable = true;
+				show("代表队ID：  " + res.id + "  请牢记此ID,参赛选手报名需填写此ID！");
+			},
+			error: function(res, e) {
+				clickable = true;
+				show("报名失败：" + e.description);
+			}
+		});
+	}
+},
+error:function(e){
+	clickable = true;
+	show(e.message);
+}
+});
+});
+$("#register").click(function() {
+	if(!clickable){
+		show("发送报名请求中....");
+		return;
+	}
+var d = optProjectSelect.getSelectedDataArr('name');
+var arr = [];
+for (var i = 0, len = d.length; i < len; i++) {
+	arr.push(d[i]);
+}
+var project = arr.join(' ');
+var name = $("#name").val();
+if (!/^[\u4e00-\u9fa5 ]{2,5}$/.test(name)) {
+	show('非法名字(只能是2-5个汉字)！');
+	$("#name").val("");
+	return;
+}
+var from = $("#from").val();
+if (from.length <= 0) {
+	show('没有输入报名单位！');
+	return;
+}
+var tel = $("#tel").val();
+if (!/^[0-9]{11}$/.test(tel)) {
+	show('请输入正确的手机号码！');
+	return;
+}
+
+var idCard = $("#idCard").val();
+if (!/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/.test(idCard)) {
+	show("身份证号不合法！");
+	return;
+}
+var level = $("#level").val();
+var year = idCard.substr(6,4);
+year = levelSelect.isLevelSuit(year);
+if (!year) {
+	show('出生年月与所选组别要求不一致！');
+	return;
+}
+
+if($("#vipId").val().length<=0){
+	show("请输入正确的武术协会会员证号码");
+	return;
+}
+if(!clickable){
+	show("正在处理您的报名请求，请稍后再试");
+	return;
+}
+clickable = false;
+var query = new Bmob.Query(Bmob.Object.extend('team'));
+query.get($("#teamID").val().trim(),{
+	success: function(res) {
+	if (res) {
+		myTeam = res;
+		console.log(myTeam);
+		var testQuery = new Bmob.Query(Bmob.Object.extend('player1'));
+		testQuery.equalTo('gameNo',gameNo);
+		testQuery.equalTo('name', name);
+		testQuery.equalTo('project', project);
+		testQuery.equalTo('level', levelSelect.getLevel('sex','男'));
+		testQuery.find({
+			success:function(res){
+				if(res.length>0){
+					clickable = true;
+					show("该比赛中已存在：同项目，同姓名，同组别的选手！");
+				}else{
+					var Reg = Bmob.Object.extend('player1');
+					var reg = new Reg();
+					reg.set('gameNo', gameNo);
+					reg.set('name', name);
+					reg.set('game', GAME);
+					reg.set('sex', $("input[name='sex']:checked").val());
+					reg.set('birth', idCard.substr(6,4)+"年 "+idCard.substr(10,2)+"月");
+					reg.set('project', project);
+					reg.set('level', levelSelect.getLevel('sex','男'));
+					reg.set("age", year);
+					reg.set('from', from);
+					reg.set('phone', tel);
+					reg.set("tag", 0);
+					reg.set('score',0.0);
+					reg.set('score1',0.0);
+					reg.set('score2',0.0);
+					reg.set('score3',0.0);
+					reg.set('score4',0.0);
+					reg.set('score5',0.0);
+					reg.set('endScore',0.0);
+					reg.set('head',headURL);
+					reg.set("vip_id",$("#vipId").val());
+					reg.set('team',myTeam);
+					reg.set("idCard", idCard);
+					reg.save(null, {
+						success: function(res) {
+							clickable = true;
+							if (res.id)
+								alert('报名成功~ id为：' + res.id);
+							else
+								show("报名失败！");
+							},
+						error: function(res, e) {
+							clickable = true;
+							show("报名失败：" + e.message);
+						}
+					});
+				}
+			},
+			error:function(e){
+				clickable = true;
+				alert(e.message);
+			}
+		});
+	} else {
+		clickable = true;
+		show("代表队ID不存在");
+	}
+},
+	error: function(e) {
+		clickable = true;
+		show("获取代表队信息失败：" + e.message);
+}
+});
+});
+		</script>
+	</body>
+</html>

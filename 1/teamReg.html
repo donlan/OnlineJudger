@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script type="text/javascript" src="js/jquery-2.1.3.min.js" ></script>
+		<script type="text/javascript" src="js/bmob-min.js"></script>
+		<script type="text/javascript" src="js/Bmob.Config.js"></script>
+		<script type="text/javascript" src="dtGrid/dependents/bootstrap/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="dtGrid/dependents/bootstrap/css/bootstrap.min.css" />
+		<!--[if lt IE 9]>
+		<script src="dtGrid/dependents/bootstrap/plugins/ie/html5shiv.js"></script>
+		<script src="dtGrid/dependents/bootstrap/plugins/ie/respond.js"></script>
+		<![endif]-->
+		<!--[if lt IE 8]>
+		<script src="dtGrid/dependents/bootstrap/plugins/ie/json2.js"></script>
+		<![endif]-->
+		<!-- font-awesome -->
+		<link rel="stylesheet" type="text/css" href="dtGrid/dependents/fontAwesome/css/font-awesome.min.css" media="all" />
+		<!-- dtGrid -->
+		<script type="text/javascript" src="dtGrid/jquery.dtGrid.js">
+		</script>
+		<script type="text/javascript" src="dtGrid/i18n/zh-cn.js">
+		</script>
+		<link rel="stylesheet" type="text/css" href="dtGrid/jquery.dtGrid.css" />
+		<script type="text/javascript" src="dtGrid/dependents/datePicker/WdatePicker.js" defer="defer">
+		</script>
+		<link rel="stylesheet" type="text/css" href="dtGrid/dependents/datePicker/skin/WdatePicker.css" />
+		<link rel="stylesheet" type="text/css" href="dtGrid/dependents/datePicker/skin/default/datepicker.css" />
+		<style>
+			button{
+				border: dotted #228B22;
+				border-radius: 4px;
+				height: 50px;
+				min-width: 120px;
+				background-color: #06CB45;
+				color: #FFFFFF;
+				font-size: large;
+			}
+		</style>	
+	</head>
+	<body>
+		<!--
+        	作者：760625325@qq.com
+        	时间：2016-07-13
+        	描述：
+        <button id="regTeam">注册代表队</button>
+        -->
+		<button id="queryTeam">查看注册代表队</button>
+		<div id="teamGridToolbar"></div>
+		<div id="teamGrid"></div>
+		<script>
+			var team =[];
+			team.push("太原市晋源区龙兴小学");
+			team.push("嘉峰腾龙武馆");
+			team.push("祁县郭瑾通戴氏形意拳中心");
+			team.push("孝义形意拳研究会安居小学");
+			team.push("山西省吕梁市太极拳协会");
+			team.push("祁县八卦掌武术协会");
+			team.push("祁县戴隆邦心意拳研究室");
+			team.push("山西省金桃园武术协会");
+			team.push("山东淮坊武协形意拳研究所");
+			team.push("山东和合居郓城混元门队");
+			team.push("徐州市自强国术馆代表队");
+			team.push("高平市米山镇米东一队");
+			team.push("高平市米山镇米东二队");
+			team.push("高平市米山镇米东三队");
+			team.push("高平市广场北站");
+			team.push("高平市米山镇米东四队");
+			team.push("高平市河西镇代表队");
+			team.push("高平市体育场南站");
+			team.push("高平市颐心苑代表队");
+			team.push("高平市市庄镇代表队");
+			team.push("高平市太极拳协会");
+			team.push("祁县戴氏协会麓台山泉队");
+			team.push("车派杨吉生拳社长治分社");
+			team.push("吕梁学院武术协会代表队");
+			team.push("大同市美平武馆");
+			team.push("孝义市大孝堡乡武术队");
+			team.push("太原市太极拳协会");
+			team.push("大同市杨式太极拳协会");
+			team.push("武汉形意拳研究会");
+			team.push("闻喜县代表队");
+			team.push("大同煤矿体协会太极拳队");
+			team.push("灵石县海龙武术学校");
+			team.push("武乡县形意拳协会");
+			team.push("河北清河中华太极研究会");
+			team.push("温县有刚太极武校");
+			team.push("太谷实验小学");
+			team.push("中华浑元武术队");
+			team.push("烟台武协浑元武术分会");
+			team.push("平遥形意拳协会代表队");
+			team.push("运城市武术协会");
+			team.push("宇文村代表队");
+			team.push("北京武典体育文化交流公司");
+			team.push("河北省宁晋县武术协会");
+			team.push("北京浑元武术");
+			team.push("介休市武术协会代表队");
+			team.push("太原市太极拳研究会");
+			team.push("晋城市武协木兰拳站一队");
+			team.push("晋城市武协木兰拳站二队");
+			team.push("晋城市吉乐尚学文体宫");
+			team.push("阳城太极拳协会");
+			team.push("晋城古书院矿武协一队");
+			team.push("晋城古书院矿武协二队");
+			team.push("晋城成庄矿武协");
+			team.push("沁水县太极拳协会");
+			team.push("晋城弘武会馆一队");
+			team.push("晋城弘武会馆二队");
+			team.push("晋城市赵堡辅导站");
+			team.push("晋城市北岩煤矿");
+			team.push("晋城市七星广场");
+			team.push("晋城市老年大学");
+			team.push("高平武馆");
+			team.push("高平少年强武术俱乐部");
+			team.push("晋城市鑫武会馆");
+			team.push("陵川县武术协会一队");
+			team.push("陵川县武术协会二队");
+			team.push("陵川县武术协会三队");
+			team.push("泽州太极协会");
+			team.push("泽州儿童公园");
+			team.push("泽州凤城队一队");
+			team.push("泽州凤城队二队");
+			team.push("泽州西秀园");
+			team.push("泽州人民广场");
+			team.push("泽州晋庙铺");
+			team.push("泽州东四义");
+			team.push("泽州草底铺");
+			team.push("泽州巴公镇");
+			team.push("晋城市凤西社区");
+			team.push("晋城市陈氏太极文化传播中心");
+			team.push("晋城百纺有限公司");
+			team.push("晋城市推手协会");
+			team.push("晋城市太极禅社");
+			team.push("晋城市尚武堂武术俱乐部");
+			team.push("晋城市恒通站");
+			team.push("山西大学代表队");
+			team.push("张保忠太极武院");
+			team.push("晋城巨人净水代表队");
+			team.push("晋城灵苑太极瑜伽馆代表队");
+			team.push("中北大学代表队");
+			team.push("晋城个人代表队");
+			team.push("大同代表队");
+			
+			
+			//console.log(team);
+			var judgeCount = 5;
+			BmobInit();
+			$("#regTeam").click(function(){
+				loop();
+			});
+			
+			$("#queryTeam").click(function(){
+				var O = Bmob.Object.extend('player1');
+		var q = new Bmob.Query(O);
+		q.equalTo('gameNo','103');
+		//q.equalTo('courseNo','2');
+		q.notEqualTo('endScore',0);
+		q.limit(1000);
+		q.find({
+			success:function(res){
+				console.log(res);
+				for(var i =0;i<res.length;i++)
+					getFiveScore(res[i]);
+			}
+		});
+			});
+			
+			var teamColumn=[
+			{id: 'name',
+				title: '代表队',
+				type: 'string',
+				columnClass: 'table_column',
+				headerClass: "table_header",
+				fastQuery:true,
+				fastQueryType: 'lk'
+			}, 
+			{
+				id: 'id',
+				title: 'ID',
+				type: 'string',
+				columnClass: 'table_column',
+				headerClass: "table_header",
+				fastQuery: false
+			},
+			];
+			var allTeam = [];	
+			var teamOption = {
+				lang: 'zh-cn',
+				ajaxLoad: false,
+				exportFileName: '比赛代表队',
+				datas: allTeam,
+				columns: teamColumn,
+				gridContainer: 'teamGrid',
+				toolbarContainer: 'teamGridToolbar',
+				tools: 'refresh|faseQuery|advanceQuery|export[excel,csv,pdf,txt]|print',
+				pageSize: 100,
+				pageSizeLimit: [10, 20, 50,100,200,500,1000]
+			};
+			
+			
+			
+			var s = team.length;
+			var loop = function(){
+				for(var i =0;i<s;i++){
+					teamAction(team[i]);
+				}
+			}
+			
+			
+			var teamAction = function(name){
+				var Obj = Bmob.Object.extend('team');
+				var o = new Obj();
+				o.set('teamName',name);
+				o.set('addr',"晋城");
+				o.save(null,{
+					success:function(g){
+						console.log(name+" : "+g);
+					},
+					error:function(o,e){
+						console.log("Error: "+e);
+					}
+				});
+			}
+			
+					
+			var queryTeam =function(){
+				var Team = Bmob.Object.extend("team");
+				var query = new Bmob.Query(Team);
+				query.equalTo('addr','晋城');
+				query.find({
+				  success: function(results) {
+				  	console.log(results);
+				    for (var i = 0; i < results.length; i++) {
+				      var team = new Object();
+				      team.name = results[i].get('teamName');
+				      team.id = results[i].id;
+				      allTeam.push(team);
+				    }
+				    var grid = $.fn.DtGrid.init(teamOption);
+					grid.load();
+				  },
+				  error: function(error) {
+				    alert("查询失败: " + error.code + " " + error.message);
+				  }
+				});
+			}
+			
+
+		
+			
+		
+			
+			function getFiveScore(res) {
+	var a = new Array(judgeCount + 2);
+	var b = new Array(judgeCount);
+	for (var i = 1; i <= judgeCount; i++) {
+		
+		a[i - 1] = Number(res.get("score"+i)).valueOf();
+		b[i - 1] = Number(res.get("score"+i)).valueOf();
+	}
+	b.sort(function(a,b){
+		if(Number(a)>Number(b))
+		return 1;
+		if(Number(a)<Number(b))
+		return -1;
+		return 0;
+	});
+	var s = 0.0;
+	if (judgeCount > 3) {
+		for (var i = 1; i < judgeCount - 1; i++) {
+			s = s + b[i]*100;
+		}
+		console.log("_"+s);
+		s = (s / (judgeCount - 2))/100;
+	} else {
+		for (var i = 0; i < judgeCount; i++) {
+			s = s + b[i]*100;
+		}
+		s = (s / judgeCount)/100;
+	}
+	
+	console.log(s);
+		if(Number(Number(s).toFixed(2)).valueOf()>s)
+			a[judgeCount] = Number(Number(s-0.005).toFixed(2)).valueOf();
+		else
+			a[judgeCount] = Number(Number(s).toFixed(2)).valueOf();
+	console.log(a);
+	if(a[judgeCount] !=  res.get('endScore') || a[judgeCount] !=  res.get('score'))
+	{
+		up(res.id,a[judgeCount]);
+	}
+}
+			
+			var up = function(id,score){
+				var GameScore = Bmob.Object.extend("player1");
+					var query = new Bmob.Query(GameScore);
+					
+					query.get(id, {
+					    success: function(gameScore) {
+					      // 回调中可以取得这个 GameScore 对象的一个实例，然后就可以修改它了
+					      gameScore.set('endScore', score);
+					      gameScore.set('score', score);
+					      gameScore.save();
+						console.log(id+"_OK");
+					      // The object was retrieved successfully.
+					    },
+					    error: function(object, error) {
+							console.log(error);
+					    }
+			});
+			}
+		</script>
+	</body>
+</html>

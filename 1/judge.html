@@ -1,0 +1,248 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,height=device-height, initial-scale=1" />
+<title>裁判员</title>
+<style>
+
+	body {
+		font: large Helvetica, Arial, sans-serif;
+		}
+	button{
+		min-width: 60px;
+		min-height: 60px;
+		background-color: #FFFFFF;
+		border-style: solid;
+		border-width: 2px;
+		border-color:#FF6F49;
+		font-size: 200%;
+		color: #324738;
+		border-radius: 100px;
+		text-align: center;
+	}
+	.left{
+		float: left;
+		width: 50%;
+	}
+	.right{
+		float: left;
+		width: 50%;
+	}
+	.circleClick{
+		color: #F5F5DC;
+		background-color:#FF6F49;
+	}
+	.rectButton{
+		border-radius: 8px; 
+		line-height: 60px;
+		height: 60px;
+		min-width: 100px;
+		max-width: 300px;
+		border: solid #E38D13;
+		background-color: #EB9316;
+		color: #FFFAF0;
+		font-size: x-large;"
+	}
+	.inputScore {
+		width: 50%;
+		min-height: 120px;
+		color: #F00;
+		font-size: 300%;
+		border-radius: 200px;
+		border-color: #FF0;
+		border-style: solid;
+		border-width: 5px;
+		box-shadow: none;
+		text-align: center;
+		background-color: #FFF;
+		cursor: pointer;
+		backface-visibility: hidden;
+		appearance: window;
+}
+.bg{
+ 	background: -moz-radial-gradient(circle, #D8FFFC, #73B2AE);
+ 	background: -webkit-gradient(radial, center center, 0, center center, 1000, from(#D8FFFC), to(#73B2AE));
+ 	background: -webkit-radial-gradient(circle, #D8FFFC, #73B2AE);   
+}
+td tr{
+	padding: 0px;
+	margin: 0px;
+}
+</style>
+<script src="sdk/json2.js"></script>
+<script src="js/jquery-1.11.1.js"></script>
+<script src="sdk/strophe.js"></script>
+<script src="sdk/easemob.im-1.1.js"></script>
+<script src="sdk/easemob.im-1.1.shim.js"></script>
+<script src="easemob.im.config.js"></script>
+<script type="text/javascript" src="js/zebra_dialog.js"></script>
+<link rel="stylesheet" href="css/zebra_dialog.css" type="text/css">
+<!--[if lte IE 9]>
+<script src="sdk/jplayer/jquery.jplayer.min.js"></script>
+<script src="sdk/swfupload/swfupload.js"></script>
+<![endif]-->
+</head>
+<body  class="bg">
+		<div style="float: left;position: fixed;border: dashed #CCCCCC;border-width: 3px;background: #F0F0F0;bottom: 8px;">
+			<input style="min-width: 80px;min-height: 45px;margin: 0 0;font-size: large;" id="courseInput" placeholder="输入新的场地编号" />
+			<span style="float: right;"><img src="images/checked.png" id="resetClick"></span>
+		</div>
+		
+		<div class="left" align="center">
+			<h2 align="center" id="userInfo" class="rectButton">编号</h2>
+			<input  class="inputScore" id="score" placeholder="分数" oninput="verify()"/>
+		   	<br/>
+		   	<h2 align="center" class="rectButton" style="background-color: orangered;height: 60px;">重置</h2>
+		</div>
+		<div class="right" align="center">
+		<table align="left" frame="void" cellspacing="5px" style="width: 100%;margin-left: 20px;">
+			<tr>
+				<td><button class="circleClick">1</button></td>
+				<td><button class="circleClick">2</button></td>
+				<td><button class="circleClick">3</button></td>
+			</tr>
+			<tr>
+				<td><button class="circleClick">4</button></td>
+				<td><button class="circleClick">5</button></td>
+				<td><button class="circleClick">6</button></td>
+			</tr>
+			<tr>
+				<td><button class="circleClick">7</button></td>
+				<td><button class="circleClick">8</button></td>
+				<td><button class="circleClick">9</button></td>
+			</tr>
+			<tr>
+				<td><button class="circleClick">0</button></td>
+				<td><button class="circleClick">.</button></td>
+				<td><button class="circleClick" style="font-size: xx-large;background-color: #FF0000;">提交</button></td>
+			</tr>
+		</table>
+		</div>
+		<script type="text/javascript" src="js/im_base.js" ></script>
+	<script>
+		document.title = "比赛 "+getUrlKey("gameNo")+" 场地 "+getUrlKey("courseNo")+" 裁判员 "+getUrlKey("seq");
+        $(":button").hover(function(){
+			$(this).animate({
+				opacity:"0.6"
+			},"fast");
+		},
+		function(){
+			$(this).animate({
+				opacity:"1"
+			},"fast");
+		});
+		$(":button").click(function(){
+			if($(this).text()=="重置")
+			{
+				$("#score").val("");
+			}else if($(this).text()=="提交"){
+
+				submitScore();
+			}else{
+				$("#score").val($("#score").val()+$(this).text());
+				if(!verify())
+				$("#score").val("");
+			}
+		});
+		$("#resetClick").click(function(){
+			if (!/^[0-9]{1,}$/.test($("#courseInput").val())) {
+               Tip('非法场地编号！');
+               return;
+             }
+             window.location.href="http://onjudge.applinzi.com/judge.html?name="+user+"&w="+pass+"&tag="+tag+"&gameNo="+gameNo+"&courseNo="+$("#courseInput").val()+"&seq="+seq;
+		});
+		
+		function verify()
+		{
+			var str =document.getElementById('score').value;
+			if(str.length>4)
+			{
+				alert('有效的分数是小于等于10的 整数或者一位小数. 例如 9 ，9.8！');
+				return false;
+			}
+			var s = Number(str).toFixed(2);
+			if('NaN'==s)
+			{
+				alert('有效的分数是小于等于10的 整数或者一位或者两位小数！');
+				return false;
+			}else if(s>10 || s<= 0)
+			{
+				alert('有效的分数是小于等于10的 整数或者一位或者两位小数！');
+				return false;
+			}else
+			{
+				return s;
+			}
+		}
+    	function submitScore()
+		{
+    		if(userId==null || judge==false)
+    		{
+        		alert('没有同步到正在比赛的信息！');
+        		return;
+    		}
+			var s = verify();
+			if(s == false)
+			{
+				alert("分数不正确");
+				return;
+			}
+            var msg='{"gameNo":"'+gameNo+'","courseNo":"'+courseNo+'","seq":"'+seq+'","id":"'+userId+'","tag":"'+tag+'","content":"'+$("#score").val()+'","cmd":"'+CMD.JudgeCommit+'"}';
+            sendText(msg);
+            console.log(msg);
+            judge=false;
+            $("#score").val("");
+            //$("#userInfo").text("");
+            
+		}
+		
+		var handleTextMessage = function(message)
+		{
+			
+	    	var type = message.type;//类型
+	    	var data = message.data;//消息体
+	    	if(type=='groupchat')
+	    	{
+	    		try{	    			
+	        	var v = jQuery.parseJSON(data);
+	    		if(v.gameNo==gameNo && v.courseNo==courseNo)
+	    		{
+		    		if(v.cmd==CMD.Start)
+		    		{
+			    		$('#userInfo').text(v.content);
+			    		userId = v.userId;
+			    		judge=true;
+			    		var msg='{"gameNo":"'+gameNo+'","courseNo":"'+courseNo+'","id":"'+userId+'","seq":"'+seq+'","tag":"'+tag+'","content":"就绪","cmd":"'+CMD.JudgeReady+'"}';
+            			sendText(msg);
+            			console.log("Read:"+msg);
+            			Tip("选手   "+v.content+"  开始比赛");
+		    		}else if(v.cmd == CMD.ModifyScore && v.tag == tag)
+		    		{
+		    			judge=true;
+		    			userId = v.userId;
+		    			show(v.content);
+		    		}
+		    		console.log(v.tag+","+tag);
+	    		}else{
+	    			return;
+	    		}
+	    	}catch(SyntaxError)
+	    	{
+	    		console.log(SyntaxError);
+	    	}
+	    	}
+		
+		}
+		
+		var getUrlKey = function(name) { 
+			var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i'); 
+			var r = window.location.search.substr(1).match(reg); 
+			if (r != null) {
+			return unescape(r[2]); 
+			}
+			return null; 
+		}
+    </script>
+</body>
+</html>

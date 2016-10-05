@@ -1,0 +1,749 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>裁判长</title>
+<style type="text/css">
+td {
+	text-align: center;
+}
+
+.up {
+	background: url(images/up.png);
+	width: 50px;
+	height: 50px;
+	border: none;
+	margin-top: 5px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.down {
+	background: url(images/down.png);
+	width: 50px;
+	height: 50px;
+	border: none;
+	margin-top: 5px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.judgeText {
+	margin: 16px;
+	text-align: center;
+	font-size: 36px;
+	color: #fff;
+	background-color: cadetblue;
+	width: 30%;
+}
+
+.judgeScore {
+	text-align: center;
+	font-size: x-large;
+	color: #fff;
+	background-color: #FF7400;
+	border-style: solid;
+	border-color: #FFB273;
+	border-left-width: 2px;
+}
+</style>
+<meta charset="utf-8">
+		<title>
+			裁判长
+		</title>
+		<script type="text/javascript" src="js/jquery-2.1.3.min.js" ></script>
+		<script type="text/javascript" src="js/underscore-min.js"></script>
+		<script type="text/javascript" src="js/jquery.range.js" ></script>
+		<script type="text/javascript" src="js/PalyerSort.js" ></script>
+		<script src="sdk/json2.js"></script>
+		<script src="js/bmob-min.js"></script>
+		<script src="js/Bmob.Config.js"></script>
+		<script src="sdk/strophe.js"></script>
+		<script src="sdk/easemob.im-1.1.js"></script>
+		<script src="sdk/easemob.im-1.1.shim.js"></script>
+		<script src="easemob.im.config.js"></script>
+		<script type="text/javascript" src="js/pageQuery.js" ></script>
+		<script type="text/javascript" src="js/zebra_dialog.js"></script>
+		<script type="text/javascript" src="dtGrid/dependents/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="dtGrid/jquery.dtGrid.js"></script>
+		<script type="text/javascript" src="dtGrid/i18n/zh-cn.js"></script>
+		<script type="text/javascript" src="dtGrid/dependents/datePicker/WdatePicker.js" defer="defer"></script>
+		<link rel="stylesheet" type="text/css" href="dtGrid/dependents/datePicker/skin/WdatePicker.css" />
+		<link rel="stylesheet" type="text/css" href="dtGrid/dependents/datePicker/skin/default/datepicker.css" />
+		<link rel="stylesheet" type="text/css" href="dtGrid/dependents/bootstrap/css/bootstrap.min.css" />
+		<link href="css/style.css" type="text/css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/jquery.range.css" />
+		<link rel="stylesheet" href="css/zebra_dialog.css" type="text/css">
+		<link rel="stylesheet" type="text/css" href="dtGrid/jquery.dtGrid.css" />
+		<link rel="stylesheet" type="text/css" href="dtGrid/dependents/fontAwesome/css/font-awesome.min.css" media="all" />
+		<!--[if lte IE 9]>
+		<script src="sdk/jplayer/jquery.jplayer.min.js"></script>
+		<script src="sdk/swfupload/swfupload.js"></script>
+		<![endif]-->
+</head>
+<body>
+	
+	
+	<body  style="background-color: #FFFAF0;">
+		<div style="float: left;position: fixed;bottom:0px;right: 0px;z-index: 1000; border: dashed #CCCCCC;border-width: 3px;background: #F0F0F0;">
+			<input style="min-width: 80px;min-height: 45px;margin: 0 0;font-size: large;" id="courseInput" placeholder="输入新的场地编号" />
+			<span style="float: right;"><img src="images/checked.png" id="resetClick"></span>
+		</div>
+		<div class="topBar">
+			<h2 id="topInfo">
+				无信息
+			</h2>
+		</div>
+		<div>
+			<table  frame="void" cellspacing="1px" align="center" width="100%">
+				<tr id="judgeList">
+				</tr>
+			</table>
+			<table  frame="void" cellspacing="1px" align="center" width="100%">
+				<tr id="judgeHandle">
+				</tr>
+			</table>
+		</div>
+		<div class="left" id="userList" >
+			<div id="dtGridToolBarContainer_2_1_1" class="dt-grid-toolbar-container"></div>
+			<div id="dtGridContainer_2_1_1" class="dt-grid-container" style="overflow: scroll;overflow-wrap: hyphenate;overflow-y: auto;max-height: 400px;">
+			</div>
+		</div>
+		<div class="right">
+			<table style="margin-top: 30px;" align="center">
+				<tr>
+					<td>
+						<label style="font-size: 200%;">最终得分:</label>
+						<span id="finalScore" style="font-size: xx-large; color: #F00;">0.00</span>
+					</td>
+					<td>
+						<button class="up"  onclick="alterPoint(1)" class="circle">
+						</button>
+						<button class="down"  onclick="alterPoint(0)" class="circle">
+						</button>
+					</td>
+				</tr>
+			</table>
+			<div style="margin-top: 40px;">
+				<button style="font-size: large;" onclick="start()" class="circle">
+					开始比赛
+				</button>
+				<button style="background-color: #f30;font-size: large;" class="circle" type="submit"
+				id="submitScore">
+					提交得分
+				</button>
+				<button style="background-color: #090; font-size: large;" class="circle" type="submit"
+				id="next" onClick="nextUser(true)">
+					下一选手
+				</button>
+			</div>
+				<table id="timeTable" align="center">
+					<tr>
+						<td>
+							<h2>
+								计时
+							</h2>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input class="countTime" type="submit" id="countTime"
+							value="00:00:00" onClick="startTiming()">
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button style="font-size: large;margin-top: 20px;" onclick="startTiming()" class="circle">
+								计时
+							</button>
+							<button id="pauseBtn" style="font-size: large;margin-top: 20px;background-color: #EB9316;" onclick="pause()" class="circle">
+								暂停
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<br />
+							<input type="hidden" class="single-slider" style="width: 500px;"  value="120" />
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button id="resetCounter" style="margin-top: 40px;font-size: large;border-radius: 10px;border: solid #B3B3B3;">
+								重置计时时间长度
+							</button>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<h4>定时说明</h4>
+							<p>以上的刻度是以秒为单位的</p>
+							<p>太极拳项目4-6分钟</p>
+							<p>太极器械类项目3-4分钟</p>
+						</td>
+					</tr>
+				</table>
+			<div class="bottom">
+			</div>
+		</div>
+	
+		
+		
+		
+		<script type="text/javascript" src="js/im_base.js" ></script>
+	<script>
+	document.title = "比赛 "+getUrlKey("gameNo")+" 场地 "+getUrlKey("courseNo")+" 裁判长 "+getUrlKey("name");
+	$("#timeTable").hide();
+	
+        var dtGridColumns = [{
+	id: 'user_rank',
+	title: '排名',
+	type: 'number',
+	columnClass: 'table_column',
+	headerClass: "table_header",
+	fastQuery: true,
+	fastQueryType: 'eq',
+	resolution:function(value, record, column, grid, dataNo, columnNo){
+	        var content = '';
+	        if(dataNo<=2){
+	            content += '<span style="background:#FF6C3B;padding:2px 10px;color:white;">'+(dataNo+1)+'</span>';
+	        }else{
+	        	content+=(dataNo+1);
+	        }
+	        return content;
+	    }
+}, {
+	id: 'user_id',
+	title: 'ID',
+	type: 'string',
+	columnClass: 'table_column',
+	headerClass: "table_header",
+	fastQuery: true,
+	fastQueryType: 'eq'
+}, {
+	id: 'user_no',
+	title: '编号',
+	type: 'string',
+	columnClass: 'table_column',
+	headerClass: "table_header",
+	fastQuery: true,
+	fastQueryType: 'eq'
+}, {
+	id: 'user_name',
+	title: '姓名',
+	type: 'string',
+	columnClass: 'table_column',
+	headerClass: "table_header",
+	fastQuery: true,
+	fastQueryType: 'eq'
+}, {
+	id: 'user_project',
+	title: '项目',
+	type: 'string',
+	columnClass: 'table_column',
+	headerClass: "table_header",
+	fastQuery: true,
+	fastQueryType: 'eq'
+}, {
+	id: 'user_level',
+	title: '组别',
+	type: 'string',
+	columnClass: 'table_column',
+	headerClass: "table_header",
+	fastQuery: true,
+	fastQueryType: 'eq'
+}, {
+	id: 'user_from',
+	title: '单位',
+	type: 'string',
+	columnClass: 'table_column',
+	headerClass: "table_header",
+	fastQuery: true,
+	fastQueryType: 'eq'
+}, {
+	id: 'user_score',
+	title: '状态/得分',
+	type: 'number',
+	columnClass: 'table_column',
+	headerClass: "table_header",
+	fastQuery: true,
+	fastQueryType: 'eq',
+	resolution:function(value, record, column, grid, dataNo, columnNo){
+	        var content = '';
+	        if(value<=0){
+	            content += '<span style="background:#00a2ca;padding:2px 10px;color:white;">待比赛</span>';
+	        }else{
+	            content += '<span style="background:#c447ae;padding:2px 10px;color:white;">'+value+'</span>';
+	        }
+	        return content;
+	    }
+}];
+
+var datas = new Array();
+var c = 0;
+var m = 0;
+var s = 0;
+var timeCounter = 360000;
+var mCounter = 7200;
+var t;
+var alterGap = 0.1;
+var timing = 2;
+var List = null;
+var count = 0;
+var index = 0;
+var judgeCount = 0;
+var plus = 0;
+var judger = [];
+var grid;
+var tempScore=[];
+var nextFlag = true;
+$('.single-slider').jRange({
+	from: 0, //滑动范围的最小值，数字，如0
+	to: 600, //滑动范围的最大值，数字，如100
+	step: 10, //步长值，每次滑动大小
+	scale: [0, 60, 120, 180, 240, 300,360,420,480,540,600], //滑动条下方的尺度标签，数组类型，如[0,50,100]
+	format: '%s', //数值格式
+	width: 500, //滑动条宽度
+	showLabels: true, // 是否显示滑动条下方的尺寸标签
+	showScale: true //是否显示滑块上方的数值标签
+});
+
+$("#resetCounter").click(function() { 
+	stopCount();
+    mCounter  = $(".single-slider").val()*60; 
+    }); 
+var start = function() {
+	if (roomid == null) {
+		show('同步当前场地的比赛选手信息失败！请重新刷新！');
+		return;
+	}
+	if (index >= count) {
+		show('所有选手已比赛完');
+		return;
+	}
+	nextFlag = false;
+	plus = 0;
+	var msg = initMsg(index);
+	sendText(msg);
+	Tip(List[index].get("name")+" 开始比赛");
+	for (var i = 1; i <= judgeCount; i++) {
+		if(tempScore[0]==List[index].id && tempScore[i]!=undefined){
+			$("#judge" + i).text('裁判 ' + i + ' 打分:' +Number(tempScore[i]).toFixed(2));
+		}else{
+			$("#judge" + i).text('裁判 ' + i + ' 等待连接' );
+		}
+	}
+	$("#finalScore").text("0.00");
+}
+$("#resetClick").click(function(){
+			if (!/^[0-9]{1,}$/.test($("#courseInput").val())) {
+               Tip('非法场地编号！');
+               return;
+             }
+             window.location.href="http://onjudge.applinzi.com/mainJudge.html?name="+user+"&w="+pass+"&gameNo="+gameNo+"&courseNo="+$("#courseInput").val();
+});
+$("#submitScore").click(function(){
+	submitScore(index);
+});
+function initMsg(index) {
+	if(!List){
+		Tip('沒有選手信息');
+		return;
+	}
+	var content = ' 编号:' + List[index].get('no');
+	var msg = '{"userId":"' + List[index].id + '","gameNo":"' + gameNo + '","courseNo":"' + courseNo + '","content":"' + content + '","cmd":"' + CMD.Start + '"}';
+	return msg;
+}
+
+function nextUser(next) {
+	
+	if(!nextFlag && next){
+		show("未提交当前打分，不能进行下一位选手的比赛！");
+		return;
+	}
+	if (index >= count-1) {
+		show('已经是最后一个选手');
+		index++;
+		return;
+	}
+	var s = getFiveScore(false);
+	if (s == -1 && next) {
+		show("请等5位裁判员打完完毕后再进行下一选手的比赛");
+		return;
+	}
+	index++;
+	plus=0;
+	for (var i = 1; i <= judgeCount; i++) {
+		$("#judge" + i).text('裁判 ' + i + ' 等待开始');
+	}
+	var score =List[index].get('endScore');
+	score = isNaN(score) ?'0.00':score;
+	$("#finalScore").text('0.00');
+	
+	
+	Tip("当前比赛选手   "+List[index].get('name'));
+	tempScore[0] = List[index].id;
+	for (var i = 1; i <= judgeCount; i++) {
+		tempScore[i]=undefined;
+	}
+	var content = '●姓名:' + List[index].get('name') + ' ●比赛项目:' + List[index].get('project') + ' ●组别:' + List[index].get('level') + ' ●单位:' + List[index].get('from') + ' ●编号:' + List[index].get('no');
+	$("#topInfo").text(content);
+	stopCount();
+}
+
+var handleTextMessage = function(message) {
+	var type = message.type; //类型
+	var data = message.data; //消息体
+	if (type == 'groupchat') {
+		try{
+		var v = jQuery.parseJSON(data);
+		if (gameNo == v.gameNo && courseNo == v.courseNo) {
+			switch (v.cmd) {
+				case CMD.JudgeCommit:
+					handleComingScore(v.seq, v.content);
+					judger[v.seq] = v.tag;
+					break;
+					
+				case CMD.JudgeReady:
+					var id = '#judge' + v.seq;
+					if(tempScore[0]==v.id && tempScore[v.seq]!=undefined){
+						$(id).text('裁判 ' + v.seq + ' 打分:' +Number(tempScore[v.seq]).toFixed(2));
+					}else{
+						$(id).text('裁判 ' + v.seq + ' 连接就绪');
+					}
+					judger[v.seq] = v.tag;
+					Tip('裁判 ' + v.seq + ' 连接就绪'+ v.tag);
+				break; 
+				
+//				case CMD.SendScreen:
+//					var score = v.score.split(",");
+//						
+//					break;
+				}
+		}
+		}catch(e){
+			console.log(e);
+		}
+	}
+}
+
+function handleComingScore(no, score) {
+	var id = '#judge' + no;
+	$(id).text('裁判 ' + no + ' 打分:' + Number(score).toFixed(2));
+	tempScore[no] = score;
+	var s = getFiveScore(false);
+	if (s != -1) {
+		setFinalScore(Number(s[judgeCount]).toFixed(2));
+		Tip('裁判 ' + no + ' 打分:' + score);
+	}
+}
+
+function resetScore(tag,isUp) {
+	if(judger[tag]==undefined){
+		show("该裁判员未同步到本场次的比赛");
+		return;
+	}
+	var code ;
+	if(isUp)
+	code = prompt("输入增加的小分！", '');
+	else
+	code = prompt("输入减小的小分！", '');
+	var s = Number(code).toFixed(2);
+	if (code == null || s < 0 || s > 10) {
+		show("小分的范围不正确 ，需要在 0 到 10 之间！");
+		return;
+	}
+	var originScore = tempScore[tag];
+	var content;
+	if(isUp)
+	content= '请给选手：' + List[index].get('no') + ' 重新打分，原得分:'+originScore+',增加小分: ' + s;
+	else
+	content= '请给选手：' + List[index].get('no') + ' 重新打分，原得分:'+originScore+',减小小分: ' + s;
+	var msg = '{"userId":"' + List[index].id + '","gameNo":"' + gameNo + '","courseNo":"' + courseNo + '","tag":"' + judger[tag] + '","content":"' + content + '","cmd":"' + CMD.ModifyScore + '"}';
+	sendText(msg);
+}
+
+function alterPoint(type) {
+	if (document.getElementById('finalScore').innerHTML == "0.00") {
+		show('未打分不能进行加减小分');
+		return;
+	}
+	if (type == 1) {
+		if (Number(document.getElementById('finalScore').innerHTML) >= 10) {
+			show('分数已满不能继续增加');
+			return;
+		}
+		plus ++;
+		if (plus > 10) {
+			plus=10;
+			show('小分不能大于 1');
+			return;
+		}
+		document.getElementById('finalScore').innerHTML = Number(Number(document.getElementById('finalScore').innerHTML) + alterGap).toFixed(2);
+	} else {
+		if (Number(document.getElementById('finalScore').innerHTML) <= 0) {
+			show('分数已经为零不能继续减少');
+			return;
+		}
+		plus --;
+		if (plus < -10) {
+			plus=-10;
+			show('小分不能小于 -1');
+			return;
+		}
+		document.getElementById('finalScore').innerHTML = Number(Number(document.getElementById('finalScore').innerHTML) - alterGap).toFixed(2);
+	}
+	
+	console.log(plus);
+}
+
+function getFiveScore(submit) {
+	var a = new Array(judgeCount + 2);
+	var b = new Array(judgeCount);
+	for (var i = 1; i <= judgeCount; i++) {
+		var str = $("#judge" + i).text();
+		var s = Number(Number(str.substring(str.indexOf(":") + 1)).toFixed(2)).valueOf();
+		if (isNaN(s) || s <= 0 || s > 10) {
+			return -1;
+		}
+		a[i - 1] = s;
+		b[i - 1] = s;
+	}
+	b.sort(function(a,b){
+		if(Number(a)>Number(b))
+		return 1;
+		if(Number(a)<Number(b))
+		return -1;
+		return 0;
+	});
+	var s = 0.0;
+	if (judgeCount > 3) {
+		for (var i = 1; i < judgeCount - 1; i++) {
+			s = s + b[i]*100;
+		}
+		s = (s / (judgeCount - 2))/100;
+	} else {
+		for (var i = 0; i < judgeCount; i++) {
+			s = s + b[i]*100;
+		}
+		s = (s / judgeCount)/100;
+	}
+	if(s){
+		if(Number(Number(s).toFixed(2)).valueOf()>s)
+			a[judgeCount] = Number(Number(s-0.005).toFixed(2)).valueOf();
+		else
+			a[judgeCount] = Number(Number(s).toFixed(2)).valueOf();
+	}
+	if (!submit)
+		setFinalScore(Number(a[judgeCount]).toFixed(2));
+//	console.log(a);
+	return a;
+}
+
+function setFinalScore(score) {
+	document.getElementById('finalScore').innerHTML = Number(score).toFixed(2);
+}
+
+var sending = false;
+function submitScore(index) {
+	if(sending){
+		show("正在提交中...");
+		return;
+	}
+	if(!List){
+		Tip('沒有選手信息');
+		return;
+	}
+	var s = getFiveScore(true);
+	// s=[3.44,5.66,7.8,9.0,7.88,11,11];
+	
+	if (s == -1) {
+		show('请等' + judgeCount + '位裁判员打完完毕后再提交分数');
+		return;
+	}
+	sending = true;
+	nextFlag = true;
+	
+	s[judgeCount + 1] = Number($("#finalScore").text()).toFixed(2);
+	var query = new Bmob.Query(Bmob.Object.extend('player1'));
+			query.get(List[index].id,{
+				success:function(res){
+					sending = false;
+					for(var i = 0;i<judgeCount;i++)
+					{
+						res.set('score'+(i+1),Number(s[i]).valueOf());
+					}
+					res.set('score',Number(s[judgeCount]).valueOf());
+					res.set('endScore',Number(s[judgeCount+1]).valueOf());
+					res.set("tag",2);
+					res.save();
+					
+					
+					var content = '","no":"' + List[index].get("no") + '","name":"' + List[index].get("name") + '","project":"' + List[index].get("project") + ' ","level":"' + List[index].get("level") + '","endScore":"' + s[judgeCount + 1] + '","from":"' + List[index].get("from");
+					var allScore = '';
+					for (var i = 0; i < judgeCount + 2; i++) {
+						allScore += s[i];
+						if (i != judgeCount + 1) {
+							allScore += ',';
+						}
+					}
+					for(var i = 0;i<datas.length;i++)
+						{
+							var user = datas[i];
+							if(user.user_id == List[index].id)
+							{
+								user.user_score = Number(s[judgeCount+1]).toFixed(2);
+								break;
+							}
+						}
+					grid.refresh(true);
+					var msg = '{"gameNo":"' + gameNo + '","courseNo":"' + courseNo + '","id":"' + List[index].id + content + '","score":"' + allScore + '","cmd":"' + CMD.MainCommit + '"}';
+					sendText(msg);
+					sending = false;
+				},
+				error:function(o,e){
+					show(e.message);
+					sending = false;
+				}
+			});
+}
+
+function startTiming() {
+		c = 0;
+		m = 0;
+		s = 0;
+		setTimeout("document.getElementById('countTime').value='00:00:00'", 0);
+		clearTimeout(t);
+		timedCount();
+		$("#pauseBtn").text("暂停");
+		timing=2;
+}
+
+function timedCount() {
+	timeCounter --;
+	c = c + 1;
+	if (c == 100) {
+		c = 0;
+		s = s + 1;
+	}
+	if (s == 60) {
+		s = 0;
+		m = m + 1;
+	}
+	if (c < 10)
+		document.getElementById("countTime").value = m + " : " + s + " : 0" + c;
+	else
+		document.getElementById("countTime").value = m + " : " + s + " : " + c;
+	if (timeCounter<=0) {
+		pause();
+		clearTimeout(t);
+	} else {
+		t = setTimeout("timedCount()", 10)
+	}
+}
+
+function stopCount() {
+	c = 0;
+	m = 0;
+	s = 0;
+	timing = 2;
+	timeCounter = 180000;
+	setTimeout("document.getElementById('countTime').value='00:00:00'", 0);
+	clearTimeout(t);
+}
+function pause() {
+	setTimeout("", 0);
+	clearTimeout(t);
+	if(timing==1){
+		$("#pauseBtn").text("开始");
+		timing=2;
+		timedCount();
+	}else if(timing==2){
+		$("#pauseBtn").text("暂停");
+		timing=1;
+	}
+	
+}
+var initJudge = function(count) {
+	for (var i = 1; i <= count; i++) {
+		$("#judgeList").append('<td id="judge' + i + '" class="judgeScore">裁判 ' + i + ' 打分:0.00</td>');
+		$("#judgeHandle").append('<td ><button onclick="resetScore(' + i + ',true)" class="up" id="judgeUp' + i + '"></button><button  onclick="resetScore(' + i + ',false)" class="down" id="judgeDown' + i + '"></td>');
+	}
+}
+var queryUsers = function(gameNo, courseNo) {
+	var query = new Bmob.Query(Bmob.Object.extend('game1'));
+	query.equalTo('no', gameNo);
+	query.find({
+		success: function(res) {
+			if (res.length == 0) {
+				show('不存在此比赛编号！！');
+				return;
+			}
+			judgeCount = res[0].get("judgeCount");
+			initJudge(judgeCount);
+			que = new Bmob.Query(Bmob.Object.extend('player1'));
+			que.equalTo('game', res[0].id);
+			que.notEqualTo("tag",0);
+			que.equalTo('courseNo', courseNo);
+			que.ascending('no');
+			_queryCount(que,que,setGrid);
+		},
+		error: function(e) {
+			show(e.msg);
+		}
+	});
+}
+
+
+var setGrid = function(res){
+	count = res.length;
+	if (count == 0) {
+		show('该比赛没有选手信息');
+	} else {
+		res.sort(BmobprojectLevelSortFunc);
+		List = res;
+		tempScore[0] = res[0].id;
+		for (var i = 1; i <= judgeCount; i++) {
+			$("#judge" + i).text('裁判 ' + i + ' 未连接' );
+		}
+		//$("#finalScore").text(List[index].get('endScore'));
+		
+		for (var i = 0; i < res.length; i++) {
+			var user = new Object();
+			user.user_id = res[i].id;
+			user.user_name = res[i].get("name");
+			user.user_project = res[i].get("project");
+			user.user_level = res[i].get("level");
+			user.user_from = res[i].get("from");
+			user.user_score = Number(res[i].get("endScore")).toFixed(2);
+			user.user_rank = (i + 1);
+			user.user_no = res[i].get("no");
+			datas.push(user);
+		}
+		var dtGridOption = {
+			lang: 'zh-cn',
+			ajaxLoad: false,
+			exportFileName: '用户列表',
+			datas: datas,
+			columns: dtGridColumns,
+			gridContainer: 'dtGridContainer_2_1_1',
+			toolbarContainer: 'dtGridToolBarContainer_2_1_1',
+			tools: 'refresh|faseQuery|advanceQuery|print',
+			pageSize: 50,
+			pageSizeLimit: [50, 100, 200,500,1000],
+			onCellDblClick : function(value, record, column, grid, dataNo, columnNo, cell, row, extraCell, e){
+		        index = Number(grid.pager.nowPage - 1) * Number(grid.pager.pageSize) +  Number(dataNo);
+		        index--;
+		        nextUser(false);
+	    	}
+		};
+		grid = $.fn.DtGrid.init(dtGridOption);
+		grid.load();
+		var content = '●姓名:' + List[index].get('name') + ' ●比赛项目:' + List[index].get('project') + ' ●组别:' + List[index].get('level') + " ●单位:" + List[index].get('from') + ' ●编号:' + List[index].get('no');
+		$("#topInfo").text(content);
+	}	
+	
+}
+    </script>
+</body>
+</html>
